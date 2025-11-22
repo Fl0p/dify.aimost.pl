@@ -1,0 +1,94 @@
+#example files
+example/**/*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!/.env.example
+
+# Docker volumes data (keep structure with .gitkeep)
+volumes/**/*
+!volumes/**/.gitkeep
+!volumes/**/*.example
+
+# Logs
+*.log
+logs/
+volumes/certbot/logs/*
+!volumes/certbot/logs/.gitkeep
+
+# SSL certificates
+*.crt
+*.key
+*.pem
+volumes/certbot/conf/live/*
+volumes/certbot/conf/archive/*
+volumes/certbot/conf/renewal/*
+!volumes/certbot/conf/live/.gitkeep
+nginx/ssl/*
+
+# Database data
+volumes/db/data/*
+!volumes/db/data/.gitkeep
+
+# Redis data
+volumes/redis/data/*
+!volumes/redis/data/.gitkeep
+
+# Application storage
+volumes/app/storage/*
+!volumes/app/storage/.gitkeep
+
+# Sandbox
+volumes/sandbox/dependencies/*
+volumes/sandbox/conf/config.yaml
+!volumes/sandbox/dependencies/.gitkeep
+!volumes/sandbox/conf/.gitkeep
+
+# Plugin daemon
+volumes/plugin_daemon/*
+!volumes/plugin_daemon/.gitkeep
+
+# Vector stores data
+volumes/weaviate/*
+!volumes/weaviate/.gitkeep
+volumes/qdrant/*
+!volumes/qdrant/.gitkeep
+volumes/pgvector/data/*
+!volumes/pgvector/data/.gitkeep
+volumes/chroma/*
+!volumes/chroma/.gitkeep
+volumes/milvus/**/*
+!volumes/milvus/**/.gitkeep
+volumes/opensearch/data/*
+!volumes/opensearch/data/.gitkeep
+
+# Certbot www
+volumes/certbot/www/*
+!volumes/certbot/www/.gitkeep
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+.cursorignore
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker
+.dockerignore
+
+# Backup files
+*.bak
+*.backup
+
+
+# ignore gitpmoji directory
+.gitpmoji
