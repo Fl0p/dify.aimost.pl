@@ -1,6 +1,6 @@
 # replace with your own tunnel name and credentials file
 tunnel: f8484957-8d98-4160-b207-6a3f9f9db5cf
-credentials-file: /etc/cloudflared/f8484957-8d98-4160-b207-6a3f9f9db5cf.json
+credentials-file: /etc/cloudflared/credentials.json
 
 ingress:
   # Main domain - Dify application

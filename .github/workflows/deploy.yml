@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create .env file
+        run: echo '${{ secrets.ENV_FILE }}' > .env
+      
+      - name: Create credentials.json
+        run: |
+          mkdir -p cloudflared
+          echo '${{ secrets.CLOUDFLARED_CREDENTIALS }}' > cloudflared/credentials.json
+      
+      - name: Stop services
+        run: |
+          chmod +x stop.sh
+          ./stop.sh
+      
+      - name: Start services
+        run: |
+          chmod +x start.sh
+          ./start.sh
+
