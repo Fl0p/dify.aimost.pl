@@ -42,9 +42,9 @@ volumes/app/storage/*
 
 # Sandbox
 volumes/sandbox/dependencies/*
-volumes/sandbox/conf/config.yaml
 !volumes/sandbox/dependencies/.gitkeep
 !volumes/sandbox/conf/.gitkeep
+!volumes/sandbox/conf/config.yaml
 
 # Plugin daemon
 volumes/plugin_daemon/*
