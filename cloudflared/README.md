@@ -5,15 +5,17 @@ This directory contains the configuration for Cloudflare Tunnel.
 ## Files
 
 - `config.yml` - Tunnel configuration file
-- `f8484957-8d98-4160-b207-6a3f9f9db5cf.json` - Tunnel credentials file (not in git, add manually)
+- `credentials.json` - Tunnel credentials file (not in git, add manually)
 
 ## Setup
 
-1. Place your tunnel credentials file (`f8484957-8d98-4160-b207-6a3f9f9db5cf.json`) in this directory.
+1. Update the `tunnel` ID in `config.yml` with your own tunnel ID.
 
-2. The `credentials-file` path in `config.yml` is already configured for Docker (`/etc/cloudflared/f8484957-8d98-4160-b207-6a3f9f9db5cf.json`).
+2. Place your tunnel credentials file (`credentials.json`) in this directory.
 
-3. Start the tunnel using Docker Compose:
+3. The `credentials-file` path in `config.yml` is already configured for Docker (`/etc/cloudflared/credentials.json`).
+
+4. Start the tunnel using Docker Compose:
    ```bash
    docker-compose up -d cloudflared
    ```
@@ -22,18 +24,6 @@ This directory contains the configuration for Cloudflare Tunnel.
    ```bash
    docker-compose up -d
    ```
-
-## Running on Host (Alternative)
-
-If you prefer to run cloudflared on the host instead of Docker:
-
-1. Change `service: http://nginx:80` to `service: http://localhost:80` in `config.yml`
-2. Change `credentials-file` to absolute path: `/Users/flop/Work/flop/dify.aimost.pl/cloudflared/f8484957-8d98-4160-b207-6a3f9f9db5cf.json`
-3. Run:
-   ```bash
-   cloudflared tunnel --config ./cloudflared/config.yml run
-   ```
-
 ## Configuration
 
 The tunnel is configured to:

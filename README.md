@@ -124,7 +124,7 @@ Cloudflare Tunnel provides secure access without exposing ports or managing SSL 
    ```
 
 4. Place your tunnel credentials file in `./cloudflared/`:
-   - Copy `f8484957-8d98-4160-b207-6a3f9f9db5cf.json` to `./cloudflared/`
+   - Copy your tunnel credentials file (e.g., `credentials.json`) to `./cloudflared/`
    - The configuration file `./cloudflared/config.yml` is already prepared
 
 5. Start the tunnel using Docker Compose:
