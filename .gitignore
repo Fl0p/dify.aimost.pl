@@ -92,3 +92,6 @@ temp/
 
 # ignore gitpmoji directory
 .gitpmoji
+
+# Cloudflare Tunnel credentials (contains sensitive keys)
+cloudflared/*.json

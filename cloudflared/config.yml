@@ -1,0 +1,13 @@
+# replace with your own tunnel name and credentials file
+tunnel: f8484957-8d98-4160-b207-6a3f9f9db5cf
+credentials-file: /etc/cloudflared/f8484957-8d98-4160-b207-6a3f9f9db5cf.json
+
+ingress:
+  # Main domain - Dify application
+  # Using nginx:80 as cloudflared runs in Docker network
+  - hostname: dify.aimost.pl
+    service: http://nginx:80
+  
+  # Catch-all rule - must be last
+  - service: http_status:404
+
