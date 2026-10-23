@@ -2,7 +2,7 @@
 
 # Stop and clean all services including volumes
 echo "Stopping all services and removing volumes..."
-docker-compose down -v
+docker compose down -v
 
 echo "Cleaning local volumes data..."
 read -p "Are you sure you want to delete all data? (yes/no): " confirm

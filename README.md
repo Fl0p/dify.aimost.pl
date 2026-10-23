@@ -75,19 +75,19 @@ Replace `your-domain.com` with your actual domain in:
 Start all services:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Check status:
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 View logs:
 
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### 4. Setup Cloudflare Tunnel
@@ -129,12 +129,12 @@ Cloudflare Tunnel provides secure access without exposing ports or managing SSL 
 
 5. Start the tunnel using Docker Compose:
    ```bash
-   docker-compose up -d cloudflared
+   docker compose up -d cloudflared
    ```
    
    Or start all services including cloudflared:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 6. Configure DNS in Cloudflare dashboard to point to your tunnel.
@@ -178,42 +178,62 @@ Cloudflare Tunnel provides secure access without exposing ports or managing SSL 
 ./stop.sh
 
 # Restart services
-docker-compose restart
+docker compose restart
 
 # View logs
-docker-compose logs -f [service_name]
+docker compose logs -f [service_name]
 
 # Check status
-docker-compose ps
+docker compose ps
 
 # Clean up (WARNING: deletes all data!)
 ./clean.sh
 ```
 
+### Automated Deployment
+
+`.github/workflows/deploy.yml` runs `./stop.sh` and `./start.sh` on a self-hosted
+runner on the deployment host, on every push to `main`/`master` and on manual
+dispatch. Two things in it are specific to that host:
+
+- **`timeout-minutes: 20`.** The self-hosted default is six hours, and a wedged
+  docker call writes nothing to the log, so without a timeout a hang looks the
+  same as an idle queue.
+- **A credential-store-free `DOCKER_CONFIG`.** The host's
+  `~/.docker/config.json` names `desktop` as its credential store, and that
+  helper only answers inside the logged-in GUI session. Called from the runner's
+  launchd session it blocks forever, so any compose call that has to resolve an
+  image from a registry hangs before it starts. The job writes a copy of the
+  config with no `credsStore` into `$RUNNER_TEMP` — symlinking the host's
+  `contexts` and `cli-plugins`, since the compose plugin is user-scoped there —
+  and exports `DOCKER_CONFIG` for the remaining steps. The host stores no
+  registry credentials; if any are ever needed, they belong in an explicit
+  `docker login` with a repository secret.
+
 ### Database Operations
 
 ```bash
 # Connect to PostgreSQL
-docker-compose exec db psql -U postgres -d dify
+docker compose exec db psql -U postgres -d dify
 
 # Create database backup
-docker-compose exec db pg_dump -U postgres dify > backup.sql
+docker compose exec db pg_dump -U postgres dify > backup.sql
 
 # Restore from backup
-docker-compose exec -T db psql -U postgres dify < backup.sql
+docker compose exec -T db psql -U postgres dify < backup.sql
 ```
 
 ### Updating Dify
 
 ```bash
 # Stop services
-docker-compose down
+docker compose down
 
 # Update images
-docker-compose pull
+docker compose pull
 
 # Start with new images
-docker-compose up -d
+docker compose up -d
 
 # Apply database migrations (runs automatically)
 ```
@@ -227,13 +247,13 @@ By default, Weaviate is used. To use another vector database:
 
 ```bash
 # For Qdrant
-docker-compose --profile qdrant up -d qdrant
+docker compose --profile qdrant up -d qdrant
 
 # For pgvector
-docker-compose --profile pgvector up -d pgvector
+docker compose --profile pgvector up -d pgvector
 
 # For Milvus
-docker-compose --profile milvus up -d milvus-standalone
+docker compose --profile milvus up -d milvus-standalone
 ```
 
 ## Useful Links
@@ -268,22 +288,22 @@ For Cloudflare Tunnel, ports don't need to be exposed externally.
 
 ```bash
 # Logs for all services
-docker-compose logs
+docker compose logs
 
 # Logs for specific service
-docker-compose logs api
-docker-compose logs nginx
-docker-compose logs db
+docker compose logs api
+docker compose logs nginx
+docker compose logs db
 ```
 
 ### Cleanup and Restart
 
 ```bash
 # Stop and remove containers
-docker-compose down
+docker compose down
 
 # Remove volumes (WARNING: will delete all data!)
-docker-compose down -v
+docker compose down -v
 
 # Clean up unused images
 docker system prune -a
@@ -304,7 +324,7 @@ docker system prune -a
 ## Support
 
 If you encounter issues, check:
-- Service logs: `docker-compose logs`
-- Container status: `docker-compose ps`
+- Service logs: `docker compose logs`
+- Container status: `docker compose ps`
 - Configuration in `.env`
 - Dify documentation: https://docs.dify.ai
