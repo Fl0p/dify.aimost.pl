@@ -10,11 +10,45 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    
+    # A hung step has to fail rather than sit there: the runner's default is six
+    # hours, and a wedged docker call writes nothing to the log, so a hang is
+    # indistinguishable from an idle queue. Headroom matters more here than
+    # speed of detection: `stop.sh` has already torn the stack down by the time
+    # the clock matters, so a timeout that fires mid-`up` leaves dify down
+    # rather than as it was. The slowest observed cold start of the full stack
+    # was 17 minutes.
+    timeout-minutes: 30
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
+      # This host's docker config names `desktop` as its credential store. That
+      # helper is tied to the logged-in GUI session: spawned from the runner's
+      # launchd session it blocks in open(2) and never returns, so any compose
+      # call that has to resolve an image from a registry hangs. The same call
+      # from an interactive shell on this host answers in milliseconds, which is
+      # why the breakage is invisible to a hand check. The host holds no
+      # registry credentials, so the job runs against a copy of the config with
+      # no credential store in it.
+      - name: Point docker at a credential-store-free config
+        run: |
+          src="${DOCKER_CONFIG:-$HOME/.docker}"
+          dst="$RUNNER_TEMP/docker-config"
+          # Read the active context before the switch: the copy below carries the
+          # context definitions, not the record of which one is current.
+          context="$(docker context show)"
+          rm -rf "$dst"
+          mkdir -p "$dst"
+          # `docker compose` is a user-scoped plugin on this host, with no
+          # system-wide copy to fall back on, so the new config dir has to reach
+          # the same plugin and context directories the real one does.
+          for dir in contexts cli-plugins; do
+            if [ -d "$src/$dir" ]; then ln -s "$src/$dir" "$dst/$dir"; fi
+          done
+          printf '{"currentContext":"%s"}\n' "$context" > "$dst/config.json"
+          echo "DOCKER_CONFIG=$dst" >> "$GITHUB_ENV"
+
       - name: Create .env file
         run: echo '${{ secrets.ENV_FILE }}' > .env
       
