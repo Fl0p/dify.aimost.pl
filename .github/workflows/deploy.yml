@@ -12,8 +12,12 @@ jobs:
     runs-on: self-hosted
     # A hung step has to fail rather than sit there: the runner's default is six
     # hours, and a wedged docker call writes nothing to the log, so a hang is
-    # indistinguishable from an idle queue.
-    timeout-minutes: 20
+    # indistinguishable from an idle queue. Headroom matters more here than
+    # speed of detection: `stop.sh` has already torn the stack down by the time
+    # the clock matters, so a timeout that fires mid-`up` leaves dify down
+    # rather than as it was. The slowest observed cold start of the full stack
+    # was 17 minutes.
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code

@@ -196,9 +196,12 @@ docker compose ps
 runner on the deployment host, on every push to `main`/`master` and on manual
 dispatch. Two things in it are specific to that host:
 
-- **`timeout-minutes: 20`.** The self-hosted default is six hours, and a wedged
+- **`timeout-minutes: 30`.** The self-hosted default is six hours, and a wedged
   docker call writes nothing to the log, so without a timeout a hang looks the
-  same as an idle queue.
+  same as an idle queue. The limit is generous on purpose: `stop.sh` has already
+  brought the stack down by then, so a timeout that fires part-way through
+  `start.sh` leaves the deployment down rather than untouched. The slowest
+  observed cold start of the full stack was 17 minutes.
 - **A credential-store-free `DOCKER_CONFIG`.** The host's
   `~/.docker/config.json` names `desktop` as its credential store, and that
   helper only answers inside the logged-in GUI session. Called from the runner's
